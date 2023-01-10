@@ -2,6 +2,8 @@
 
 tmux plugin to show a pomodoro timer
 
+![image](https://user-images.githubusercontent.com/2778493/211671253-26668ea4-3591-4d4e-be12-974f738ee043.png)
+
 Usage
 -----
 
