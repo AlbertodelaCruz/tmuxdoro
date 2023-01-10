@@ -19,7 +19,7 @@ set_pomodoro() {
   if [ -f "/tmp/break" ]; then
     rm /tmp/break
   fi
-  date -d "now + 2 min" +%s > /tmp/date
+  date -d "now + 25 min" +%s > /tmp/date
   touch /tmp/pomodoro
 }
 
@@ -27,6 +27,6 @@ set_break() {
   if [ -f "/tmp/pomodoro" ]; then
     rm /tmp/pomodoro
   fi
-  date -d "now + 1 min" +%s > /tmp/date
+  date -d "now + 5 min" +%s > /tmp/date
   touch /tmp/break
 }
