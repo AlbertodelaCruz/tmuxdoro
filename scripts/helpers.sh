@@ -1,32 +1,49 @@
 #!/usr/bin/env bash
 
-get_tmux_option() {
+helpers::set_tmux_option() {
   local option="$1"
-  local default_value="$2"
-  local option_value="$(tmux show-option -gqv "$option")"
-  if [ -z "$option_value" ]; then
-    echo "$default_value"
-  else
-    echo "$option_value"
-  fi
+  local value="$2"
+  tmux set-option -ogq "$option" "$value"
 }
 
-is_linux() {
+helpers::update_tmux_option() {
+  local option="$1"
+  local value="$2"
+  tmux set-option -gq "$option" "$value"
+}
+
+helpers::get_tmux_option() {
+  local option_value="$(tmux show-option -gqv "$1")"
+  echo "$option_value"
+}
+
+helpers::is_linux() {
   [ $(uname) == "Linux" ]
 }
 
-set_pomodoro() {
-  if [ -f "/tmp/break" ]; then
-    rm /tmp/break
+helpers::set_pomodoro() {
+  break_time=$(helpers::get_tmux_option "@break_time")
+  if [ "$break_time" = "on" ]; then
+    helpers::update_tmux_option "@break_time" "off"
   fi
-  date -d "now + 25 min" +%s > /tmp/date
-  touch /tmp/pomodoro
+  timer=$(date -d "now + 25 min" +%s)
+  helpers::update_tmux_option "@timer" "$timer"
+  helpers::update_tmux_option "@pomodoro" "on"
 }
 
-set_break() {
-  if [ -f "/tmp/pomodoro" ]; then
-    rm /tmp/pomodoro
+helpers::set_break_time() {
+  break_time=$(helpers::get_tmux_option "@pomodoro")
+  if [ "$pomodoro" = "on" ]; then
+    helpers::update_tmux_option "@pomodoro" "off"
   fi
-  date -d "now + 5 min" +%s > /tmp/date
-  touch /tmp/break
+  timer=$(date -d "now + 5 min" +%s)
+  helpers::update_tmux_option "@timer" "$timer"
+  helpers::update_tmux_option "@break_time" "on"
+}
+
+helpers::initialize_vars() {
+  helpers::set_tmux_option "@pomodoro" "off"
+  helpers::set_tmux_option "@break_time" "off"
+  timer=$(date +%s)
+  helpers::set_tmux_option "@timer" "$timer"
 }
